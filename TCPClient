@@ -1,0 +1,52 @@
+import java.io.*;
+import java.net.*;
+
+public class TCPClient {
+
+    public static void main(String[] args) throws IOException {
+        // Create a BufferedReader to read from the user
+        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+
+        // Prompt the user to enter an integer between 1 and 100
+        System.out.print("Enter an integer between 1 and 100: ");
+        int clientNumber = Integer.parseInt(inFromUser.readLine());
+
+        // Check if the number is within range
+        if (clientNumber < 1 || clientNumber > 100) {
+            System.out.println("The number is out of range. Exiting...");
+            return;
+        }
+
+        // Define the client's name
+        String clientName = "Client of John Q. Smith";
+        
+        // Establish a connection to the server at localhost on port 6789
+        Socket clientSocket = new Socket("localhost", 6789);
+        
+        // Create input and output streams for the socket
+        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        // Send the message to the server
+        outToServer.writeBytes(clientName + " " + clientNumber + "\n");
+
+        // Read the server's response
+        String serverResponse = inFromServer.readLine();
+        System.out.println("Server Response: " + serverResponse);
+
+        // Split the server's response into the name and number
+        String[] responseParts = serverResponse.split(" ");
+        String serverName = responseParts[0] + " " + responseParts[1] + " " + responseParts[2]; // "Server of [Name]"
+        int serverNumber = Integer.parseInt(responseParts[3]);
+
+        // Display the results
+        System.out.println("Client name: " + clientName);
+        System.out.println("Server name: " + serverName);
+        System.out.println("Client's number: " + clientNumber);
+        System.out.println("Server's number: " + serverNumber);
+        System.out.println("Sum: " + (clientNumber + serverNumber));
+
+        // Close the socket
+        clientSocket.close();
+    }
+}

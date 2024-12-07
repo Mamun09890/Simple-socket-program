@@ -1,0 +1,58 @@
+import java.io.*;
+import java.net.*;
+import java.util.Random;
+
+public class TCPServer {
+
+    public static void main(String[] args) throws IOException {
+        // Server name (could be your name)
+        String serverName = "Server of John Q. Smith";
+        
+        // Create a server socket to listen on port 6789
+        ServerSocket serverSocket = new ServerSocket(6789);
+        System.out.println("Server is ready and listening on port 6789...");
+        
+        // Accept client connections
+        Socket clientSocket = serverSocket.accept();
+        System.out.println("Connection established with client.");
+
+        // Create input and output streams for the socket
+        BufferedReader inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        DataOutputStream outToClient = new DataOutputStream(clientSocket.getOutputStream());
+
+        // Read message from client
+        String clientMessage = inFromClient.readLine();
+        System.out.println("Received message from client: " + clientMessage);
+
+        // Extract client name and integer from the message
+        String[] parts = clientMessage.split(" ");
+        String clientName = parts[0] + " " + parts[1] + " " + parts[2]; // "Client of [Name]"
+        int clientNumber = Integer.parseInt(parts[3]);
+
+        // If the number is out of range, terminate the server
+        if (clientNumber < 1 || clientNumber > 100) {
+            System.out.println("Received out-of-range number. Shutting down server.");
+            clientSocket.close();
+            serverSocket.close();
+            return;
+        }
+
+        // Generate a random number between 1 and 100 for the server
+        Random random = new Random();
+        int serverNumber = random.nextInt(100) + 1;
+        
+        // Print the details
+        System.out.println("Client name: " + clientName);
+        System.out.println("Server name: " + serverName);
+        System.out.println("Client's number: " + clientNumber);
+        System.out.println("Server's number: " + serverNumber);
+        System.out.println("Sum: " + (clientNumber + serverNumber));
+
+        // Send the server name and server number back to the client
+        outToClient.writeBytes(serverName + " " + serverNumber + "\n");
+
+        // Close the socket
+        clientSocket.close();
+        serverSocket.close();
+    }
+}

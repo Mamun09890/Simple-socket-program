@@ -1,0 +1,158 @@
+In this assignment, you'll write a client that will use sockets to communicate with a server that
+you will also write. Here's what your client and server should do:
+
+
+Your client should first accept an integer between 1 and 100 from the keyboard, open a TCP 1
+socket to your server and send a message containing (1) a string containing your name (e.g.,
+'Client of John Q. Smith") and (i) the entered integer value and then wait for a sever reply.
+
+
+Your server will create a string containing its name (e.g., "Server of John Q. Smith D and then
+begin accepting connections from clients. On receipt of a client message, your server should
+print (display) the client's name (extracted from the received message) and the
+server's name
+itself pick an integer between 1 and 100 (it's fine for the server to use the same
+number all the time) and display the client's number, its number, and the sum of those
+numbers
+iii. end its name string and the server-chosen integer value back to the client
+if your server recelves an integer value that is out of range, it should terminate after
+releasing any created sockets. You can use this to shut down your server.
+
+
+Your client should read the message sent by the server and display its name, the server's
+name, its integer value, and the server's integer value, and then compute and the sum. The
+client then terminates after releasing any created sockets. As an aside (and as a check that
+you are doing things correctly, you should make Sure for yourself that the values and the sums
+are correct!)
+
+
+OK. You've got the basic assignment done. The last part of the assignment should be a fun,
+social thing to do. Team up with someone from the class (advertise on the Piazza class list if
+you are looking for a partner) and get your client to interact with their server or vice versa. If
+you've got a server up and running, you can advertise your server's services to anyone in the
+class (you're not allowed to charge for service!), and if you've got a client, all you need to do
+is interact with such an advertised server.
+
+
+Note that if you've got your own client and server running, there isn't any more programming
+involved - just running your client and server with someone else's. This shouldn't actually be
+very hard at all! For this part of the assignment, you need only hand in the output from your
+"wide"-- the client or the server, since you'll be printing out the name of the other student's
+elient or server with whom your client or server is interacting. Recall that when we discussed
+RFC standards for protocols we noted that the IETF requires that two independent
+implementations of a protocol must interoperate; that's what you are doing here. Again, make
+sure to check that your numbers and sums are correct.
+
+
+Please read the information posted on the class WWW site
+(http://gaia.cs.umass.edu/cs453_fall_2013/pa_hand_in.htm)about what to hand with your
+
+
+assignment. Note that a short design document is required. You should program your client
+and server to each print an informative statement whenever it takes an action (e.g.,sends or
+receives a message, detects termination of input, etc ), so that you can see that your processes
+are working correctly (or not!). This also allows the TA to also determine from this output if
+your processes are working correctly. You should hand in screen shots (or file content, if your
+process 1S wrting to a file) of these informative messages as well as the required output of the
+elient and server (name strings, integer values and sums)
+
+Here is the code for the client side of the application:
+
+2.7 • SOCKET PROGRAMMING WITH TCP 165
+
+import java.io.*;
+
+import java.net.*;
+
+class TCPClient {
+
+public static void main(String argv[]) throws Exception
+
+{
+
+String sentence;
+
+String modifiedSentence;
+
+BufferedReader inFromUser = new BufferedReader(
+
+new InputStreamReader(System.in));
+
+Socket clientSocket = new Socket(“hostname”, 6789);
+
+DataOutputStream outToServer = new DataOutputStream(
+
+clientSocket.getOutputStream());
+
+BufferedReader inFromServer =
+
+new BufferedReader(new InputStreamReader(
+
+clientSocket.getInputStream()));
+
+sentence = inFromUser.readLine();
+
+outToServer.writeBytes(sentence + ‘\n’);
+
+modifiedSentence = inFromServer.readLine();
+
+System.out.println(“FROM SERVER: “ +
+
+modifiedSentence);
+
+clientSocket.close();
+
+}
+
+}
+
+Now let’s take a look at the server program.
+
+import java.io.*;
+
+import java.net.*;
+
+class TCPServer {
+public static void main(String argv[]) throws Exception
+
+{
+
+String clientSentence;
+
+String capitalizedSentence;
+
+ServerSocket welcomeSocket = new ServerSocket 
+
+(6789);
+
+while(true) {
+
+Socket connectionSocket = welcomeSocket. 
+
+accept();
+
+BufferedReader inFromClient = 
+
+new BufferedReader(new InputStreamReader(
+
+connectionSocket.getInputStream()));
+
+DataOutputStream outToClient = 
+
+new DataOutputStream(
+
+connectionSocket.getOutputStream());
+
+clientSentence = inFromClient.readLine();
+
+capitalizedSentence =
+
+clientSentence.toUpperCase() + ‘\n’;
+
+outToClient.writeBytes(capitalizedSentence);
+
+}
+
+}
+
+}
